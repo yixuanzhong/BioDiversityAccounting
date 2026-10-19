@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SG Biodiversity Accounting Metric · Interactive</title>
+  <meta name="description" content="Interactive calculator and habitat condition assessments for the Singapore Biodiversity Accounting Metric 1.1. Calculate baseline and post-development biodiversity units, then export or share the result.">
+  <meta property="og:title" content="SG Biodiversity Accounting Metric · Interactive">
+  <meta property="og:description" content="Calculate biodiversity units for terrestrial, freshwater and marine habitats in Singapore, assess habitat condition, and share the result.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#1f6b46">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231f6b46'/%3E%3Cpath d='M20 44c0-14 10-24 26-26-2 16-12 26-26 26z' fill='%23fff'/%3E%3Cpath d='M20 44l14-14' stroke='%231f6b46' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <div class="brand">
+        <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="rgba(255,255,255,.14)"/><path d="M18 46c0-16 11-27 29-29-2 18-13 29-29 29z" fill="#fff"/><path d="M18 46l16-16" stroke="#1f6b46" stroke-width="3"/></svg>
+        <div>
+          <h1>SG Biodiversity Accounting Metric</h1>
+          <p>Interactive edition of Metric 1.1 and its condition criteria</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="Sections">
+        <button class="tab" role="tab" data-view="calculator" aria-selected="true">Metric calculator</button>
+        <button class="tab" role="tab" data-view="terrestrial">Terrestrial condition</button>
+        <button class="tab" role="tab" data-view="freshwater">Freshwater condition</button>
+        <button class="tab" role="tab" data-view="guide">Habitat guide</button>
+        <button class="tab" role="tab" data-view="learn">How it works</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= CALCULATOR ================= -->
+    <section class="view" id="view-calculator" aria-labelledby="calc-title">
+      <h2 id="calc-title" class="sr-only">Metric calculator</h2>
+      <p class="lede">Enter the habitat parcels on your site before development (baseline), then what will be created and enhanced. The metric converts each parcel into <strong>biodiversity units = area × distinctiveness × condition</strong> and compares the two snapshots. Terrestrial, freshwater and marine units are kept separate and are never traded between ecosystems.</p>
+
+      <div class="card">
+        <header>
+          <h3>Project</h3>
+          <div class="toolbar">
+            <label class="sr-only" for="presetSelect">Load an example</label>
+            <select id="presetSelect" style="width:auto">
+              <option value="">Load an example…</option>
+            </select>
+            <button class="btn small" type="button" id="resetBtn">Clear all</button>
+          </div>
+        </header>
+        <div class="project-grid">
+          <label class="field">Project name<input id="pName" placeholder="e.g. Residential development"></label>
+          <label class="field">Project stage<input id="pStage" placeholder="e.g. Concept design"></label>
+          <label class="field">Assessor<input id="pAssessor"></label>
+          <label class="field">Reviewer<input id="pReviewer"></label>
+          <label class="field">Date of assessment<input id="pDate" type="date"></label>
+        </div>
+        <p class="muted" style="margin:10px 0 0;font-size:.82rem">Nothing you type is saved or sent anywhere. Your inputs live only in this browser tab. A share link only carries them if you choose to include them.</p>
+      </div>
+
+      <div class="calc-layout">
+        <div>
+          <div class="card">
+            <header>
+              <div class="seg" role="group" aria-label="Ecosystem" id="ecoSwitch"></div>
+            </header>
+            <div id="ecoPanel"></div>
+          </div>
+        </div>
+        <aside class="calc-side">
+          <div class="card" id="resultsCard" aria-live="polite"></div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ================= CONDITION: TERRESTRIAL ================= -->
+    <section class="view" id="view-terrestrial" hidden>
+      <h2>Terrestrial habitat condition assessment</h2>
+      <p class="lede">Score each criterion from your survey data (vegetation plots, fauna transects, walkover). The total sets the parcel's condition: <b>Good</b> (3), <b>Moderate</b> (2) or <b>Poor</b> (1), which is the condition multiplier in the metric. Criteria follow the <em>Terrestrial Habitat Condition Criteria 1.1</em> workbook.</p>
+      <div id="cond-terrestrial"></div>
+    </section>
+
+    <!-- ================= CONDITION: FRESHWATER ================= -->
+    <section class="view" id="view-freshwater" hidden>
+      <h2>Freshwater habitat condition assessment</h2>
+      <p class="lede">Score each criterion for the freshwater parcel. Criteria follow the <em>Freshwater Habitat Condition Criteria 1.1</em> workbook. Marine condition criteria are still in development by the metric authors, so marine conditions are entered directly in the calculator.</p>
+      <div id="cond-freshwater"></div>
+    </section>
+
+    <!-- ================= GUIDE ================= -->
+    <section class="view" id="view-guide" hidden>
+      <h2>Habitat guide</h2>
+      <p class="lede">All 42 habitat types in the Singapore habitat classification, with the scores behind their distinctiveness, how hard they are to create or enhance, how long they take to reach target condition, and what compensation is required if they are lost.</p>
+      <div id="guide"></div>
+    </section>
+
+    <!-- ================= LEARN ================= -->
+    <section class="view" id="view-learn" hidden>
+      <div id="learn"></div>
+    </section>
+  </main>
+
+  <footer class="site">
+    <p>Calculations, habitat data and condition criteria come from the <strong>SG Biodiversity Accounting Metric 1.1</strong>. Cite as: AECOM &amp; Camphora (2024). <em>Singapore Biodiversity Accounting Metric: Version 1.1.</em> Available at <a href="https://anz.planengage.com/singapore-bio-metric" target="_blank" rel="noopener">anz.planengage.com/singapore-bio-metric</a>. This independent interactive edition does not replace the official tool or expert ecological advice.</p>
+  </footer>
+
+  <dialog id="condDialog" aria-labelledby="condDlgTitle">
+    <div class="dlg-head"><h2 id="condDlgTitle">Assess condition</h2><button class="btn small" type="button" data-close>Close</button></div>
+    <div class="dlg-body" id="condDialogBody"></div>
+  </dialog>
+
+  <dialog id="shareDialog" class="share-dlg" aria-labelledby="shareDlgTitle">
+    <div class="dlg-head"><h2 id="shareDlgTitle">Export &amp; share</h2><button class="btn small" type="button" data-close>Close</button></div>
+    <div class="dlg-body" id="shareDialogBody"></div>
+  </dialog>
+
+  <div class="share-stage" id="shareStage" aria-hidden="true"></div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/engine.js"></script>
+  <script src="assets/js/presets.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/chart.js"></script>
+  <script src="assets/js/share.js"></script>
+  <script src="assets/js/condition.js"></script>
+  <script src="assets/js/calculator.js"></script>
+  <script src="assets/js/guide.js"></script>
+  <script src="assets/js/learn.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
